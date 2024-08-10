@@ -10,9 +10,9 @@ dotenv.config();
 //             message: "Access token not found, not authorized "});
 //     }
 //     try {
-//         // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//         // const decoded = jwt.verify(token, jwt_secretkey);
 //         // req.user = decoded;
-//         jwt.verify(token, process.env.JWT_SECRET,(err, user) => {
+//         jwt.verify(token, jwt_secretkey,(err, user) => {
 //             if (err) {
 //                 return res.status(401).json({
 //                     success: false,
@@ -28,32 +28,32 @@ dotenv.config();
 //     return next();
 // }
 export const verifyToken = (req, res, next) => {
-    const token = req.cookies.accessToken;
+  const token = req.cookies.accessToken;
 
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "Access token not found, not authorized"
-        });
-    }
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Access token not found, not authorized",
+    });
+  }
 
-    try {
-        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-            if (err) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Invalid Token"
-                });
-            }
-            req.user = user;
-            next();
-        });
-    } catch (err) {
+  try {
+    jwt.verify(token, jwt_secretkey, (err, user) => {
+      if (err) {
         return res.status(401).json({
-            success: false,
-            message: "Invalid Token"
+          success: false,
+          message: "Invalid Token",
         });
-    }
+      }
+      req.user = user;
+      next();
+    });
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid Token",
+    });
+  }
 };
 
 // export const verifyUser = (req, res, next) => {
@@ -69,28 +69,28 @@ export const verifyToken = (req, res, next) => {
 //     });
 // }
 export const verifyUser = (req, res, next) => {
-    verifyToken(req, res, () => {
-        const reqId = req.params.id;
-        if (req.user ) {
-            next();
-        } else {
-            return res.status(403).json({
-                success: false,
-                message: "You are not authenticated"
-            });
-        }
-    });
+  verifyToken(req, res, () => {
+    const reqId = req.params.id;
+    if (req.user) {
+      next();
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authenticated",
+      });
+    }
+  });
 };
 
 export const verifyAdmin = (req, res, next) => {
-    verifyToken(req, res, next,() => {
-        if (req.user.role === "admin") {
-            next();
-        } else {
-            return res.status(401).json({
-                success: false,
-                message: "You are not authorized"
-            });
-        }
-    });
-}
+  verifyToken(req, res, next, () => {
+    if (req.user.role === "admin") {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "You are not authorized",
+      });
+    }
+  });
+};

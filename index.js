@@ -11,7 +11,7 @@ import bookingRoute from "./Routes/booking.js";
 dotenv.config();
 const app = express();
 const corsOptions = {
-  origin: "*",
+  origin: true,
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
@@ -22,7 +22,8 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-const DB = process.env.MONGO_URI;
+const DB =
+  "mongodb+srv://hs1957490:Nishu%402001@cluster0.qhlqz6y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.set("strictQuery", false);
 // mongoose.connect(DB).then(() => {
 //     console.log("Database connected successfully");
